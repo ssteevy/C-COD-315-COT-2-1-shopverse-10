@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "651666429324",
+    "project_id": "shopverse-16af2",
+    "storage_bucket": "shopverse-16af2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:651666429324:android:0439c226ab91fa8dd972a9",
+        "android_client_info": {
+          "package_name": "com.example.shopverse"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "651666429324-esos7vg724rt7q3qqlqai94o83bddvon.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.shopverse",
+            "certificate_hash": "5a10d83b9b56924d796854eb2298775001767f69"
+          }
+        },
+        {
+          "client_id": "651666429324-uokppfb4g8tiiumcsodo3hiit51170r1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDi0Xr6mCnRO7J-nWOHSgYvypkqbZIF55Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "651666429324-uokppfb4g8tiiumcsodo3hiit51170r1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "651666429324-q2d0um7uv3h0c7lddkvo8nrb5mh330d1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.shopverse"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
