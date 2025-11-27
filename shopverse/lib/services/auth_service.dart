@@ -1,6 +1,3 @@
-// lib/services/auth_service.dart
-// VERSION CORRIGÉE - Compatible avec dernières versions
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,9 +17,7 @@ class AuthService {
   /// Utilisateur Firebase actuellement connecté
   User? get currentUser => _auth.currentUser;
 
-  // ==========================================
-  // INSCRIPTION EMAIL/PASSWORD
-  // ==========================================
+//  inscriptuon classique
   
   Future<UserModel?> signUpWithEmail({
     required String email,
@@ -59,10 +54,7 @@ class AuthService {
     }
   }
 
-  // ==========================================
-  // CONNEXION EMAIL/PASSWORD
-  // ==========================================
-  
+//  connexion classsique 
   Future<UserModel?> signInWithEmail({
     required String email,
     required String password,
@@ -90,47 +82,43 @@ class AuthService {
       throw 'Erreur lors de la connexion: $e';
     }
   }
-
-  // ==========================================
-  // CONNEXION GOOGLE
-  // ==========================================
-  
+// connexion google 
   Future<UserModel?> signInWithGoogle() async {
     try {
-      // 1. Déclencher le flux Google Sign-In
+      // declencher le flux Google Sign-In
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       
       if (googleUser == null) {
         return null; // Utilisateur a annulé
       }
 
-      // 2. Obtenir les tokens d'authentification
+      //get les tokens d'authentification
       final GoogleSignInAuthentication googleAuth = 
           await googleUser.authentication;
 
-      // 3. Vérifier que les tokens existent
+      // verifier que les tokens existent
       if (googleAuth.accessToken == null || googleAuth.idToken == null) {
         throw 'Impossible d\'obtenir les tokens Google';
       }
 
-      // 4. Créer les credentials Firebase
+      // creer les credentials Firebase
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      // 5. Se connecter avec Firebase
+      // se connecter avec Firebase
       UserCredential userCredential = 
           await _auth.signInWithCredential(credential);
 
-      // 6. Vérifier si le profil existe déjà
+      //veifier si le profil existe déjà
       DocumentSnapshot userDoc = await _firestore
           .collection('users')
           .doc(userCredential.user!.uid)
           .get();
 
       if (!userDoc.exists) {
-        // Nouveau compte Google → Créer profil CLIENT
+        // siouveau compte Google, creer profile
         UserModel newUser = UserModel(
           id: userCredential.user!.uid,
           email: userCredential.user!.email!,
@@ -157,10 +145,7 @@ class AuthService {
     }
   }
 
-  // ==========================================
-  // DEMANDE DE STATUT COMMERÇANT
-  // ==========================================
-  
+// demande de statut commercant
   Future<void> requestMerchantStatus({
     required String userId,
     required String reason,
@@ -179,10 +164,7 @@ class AuthService {
     }
   }
 
-  // ==========================================
-  // ADMIN : APPROUVER UNE DEMANDE
-  // ==========================================
-  
+//  approuver une demande 
   Future<void> approveMerchantRequest(String userId) async {
     try {
       await _firestore.collection('users').doc(userId).update({
@@ -192,16 +174,13 @@ class AuthService {
         'rejectionReason': null,
       });
 
-      print('✅ Demande approuvée pour $userId');
+      print('Demande approuvée pour $userId');
     } catch (e) {
       throw 'Erreur lors de l\'approbation: $e';
     }
   }
 
-  // ==========================================
-  // ADMIN : REJETER UNE DEMANDE
-  // ==========================================
-  
+//  rejeter demande 
   Future<void> rejectMerchantRequest(String userId, String reason) async {
     try {
       await _firestore.collection('users').doc(userId).update({
@@ -210,16 +189,13 @@ class AuthService {
         'merchantApprovalDate': FieldValue.serverTimestamp(),
       });
 
-      print('❌ Demande rejetée pour $userId');
+      print('Demande rejetée pour $userId');
     } catch (e) {
       throw 'Erreur lors du rejet: $e';
     }
   }
 
-  // ==========================================
-  // RÉCUPÉRER DEMANDES EN ATTENTE (Admin)
-  // ==========================================
-  
+// demandes en attentes 
   Stream<List<UserModel>> getPendingMerchantRequests() {
     return _firestore
         .collection('users')
@@ -230,10 +206,7 @@ class AuthService {
             snapshot.docs.map((doc) => UserModel.fromFirestore(doc)).toList());
   }
 
-  // ==========================================
-  // RÉCUPÉRER PROFIL UTILISATEUR
-  // ==========================================
-  
+//  recup user profile 
   Future<UserModel?> getUserProfile(String userId) async {
     try {
       DocumentSnapshot userDoc = 
@@ -246,10 +219,7 @@ class AuthService {
     }
   }
 
-  // ==========================================
-  // METTRE À JOUR PROFIL
-  // ==========================================
-  
+  // mis a jour du profil 
   Future<void> updateUserProfile({
     required String userId,
     String? displayName,
@@ -275,10 +245,7 @@ class AuthService {
     }
   }
 
-  // ==========================================
-  // RÉINITIALISATION MOT DE PASSE
-  // ==========================================
-  
+//  reinitialise mdp 
   Future<void> resetPassword(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
@@ -287,10 +254,7 @@ class AuthService {
     }
   }
 
-  // ==========================================
-  // DÉCONNEXION
-  // ==========================================
-  
+//  logout 
   Future<void> signOut() async {
     try {
       await Future.wait([
@@ -302,10 +266,7 @@ class AuthService {
     }
   }
 
-  // ==========================================
-  // GESTION DES ERREURS FIREBASE
-  // ==========================================
-  
+//  gerer erreurs firebase 
   String _handleAuthException(FirebaseAuthException e) {
     switch (e.code) {
       case 'user-not-found':
