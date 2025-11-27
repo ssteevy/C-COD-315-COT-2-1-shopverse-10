@@ -16,7 +16,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  
+
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
@@ -66,7 +66,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Créer un compte')),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -75,31 +74,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Info box
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppColors.bitcoinOrange.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppColors.bitcoinOrange.withOpacity(0.3),
-                    ),
-                  ),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.info_outline, color: AppColors.bitcoinOrange),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          'Vous serez inscrit comme Client. Vous pourrez demander le statut Commerçant depuis votre profil.',
-                          style: TextStyle(fontSize: 13),
-                        ),
-                      ),
-                    ],
+                const SizedBox(height: 12),
+                // Logo
+                const Icon(
+                  Icons.storefront_rounded,
+                  size: 70,
+                  color: AppColors.bitcoinOrange,
+                ),
+                const SizedBox(height: 8),
+
+                // Titre
+                const Text(
+                  'ShopVerse',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryBlue,
                   ),
                 ),
-                const SizedBox(height: 24),
-
+                const Text(
+                  'Marketplace Bitcoin',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: 28),
                 // Nom
                 TextFormField(
                   controller: _nameController,
@@ -145,9 +147,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     prefixIcon: const Icon(Icons.lock_outlined),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _obscurePassword 
-                          ? Icons.visibility_outlined 
-                          : Icons.visibility_off_outlined,
+                        _obscurePassword
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
                       ),
                       onPressed: () {
                         setState(() {
@@ -177,9 +179,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     prefixIcon: const Icon(Icons.lock_outlined),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _obscureConfirmPassword 
-                          ? Icons.visibility_outlined 
-                          : Icons.visibility_off_outlined,
+                        _obscureConfirmPassword
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
                       ),
                       onPressed: () {
                         setState(() {
@@ -195,20 +197,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 30),
 
                 // Bouton inscription
                 Consumer<AuthProvider>(
                   builder: (context, authProvider, child) {
                     return ElevatedButton(
-                      onPressed: authProvider.isLoading ? null : _handleRegister,
+                      onPressed: authProvider.isLoading
+                          ? null
+                          : _handleRegister,
                       child: authProvider.isLoading
                           ? const SizedBox(
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
                               ),
                             )
                           : const Text(
@@ -221,7 +227,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     );
                   },
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 14),
 
                 // Divider
                 Row(
@@ -229,22 +235,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const Expanded(child: Divider()),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text('OU', style: TextStyle(color: Colors.grey[600])),
+                      child: Text(
+                        'OU',
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
                     ),
                     const Expanded(child: Divider()),
                   ],
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 14),
 
                 // Bouton Google
                 Consumer<AuthProvider>(
                   builder: (context, authProvider, child) {
                     return OutlinedButton.icon(
-                      onPressed: authProvider.isLoading ? null : _handleGoogleSignUp,
+                      onPressed: authProvider.isLoading
+                          ? null
+                          : _handleGoogleSignUp,
                       icon: const Icon(Icons.g_mobiledata, size: 32),
                       label: const Text('Continuer avec Google'),
                     );
                   },
+                ),
+                const SizedBox(height: 14),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Déja enrégistré.e ? '),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pushNamed('/login');
+                      },
+                      child: const Text(
+                        'Se connecter',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.bitcoinOrange,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

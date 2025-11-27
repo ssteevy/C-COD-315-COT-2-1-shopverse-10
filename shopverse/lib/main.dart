@@ -8,6 +8,8 @@ import 'core/theme/app_theme.dart';
 import 'screens/auth/login.dart';
 import 'screens/auth/register.dart';
 import 'wrapper/auth_wrapper.dart';
+import 'screens/splash/splash_screen.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,12 +42,13 @@ class Shopverse extends StatelessWidget {
         themeMode: ThemeMode.system,
 
         // WRAPPER AUTH
-        home: const AuthWrapper(),
+        home: const SplashScreen(),
 
         // ROUTES
         routes: {
           '/login': (_) => const LoginScreen(),
           '/register': (_) => const RegisterScreen(),
+          '/auth-wrapper': (_) => const AuthWrapper(),
         },
       ),
     );
