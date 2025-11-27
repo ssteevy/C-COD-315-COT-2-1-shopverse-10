@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../wrapper/auth_wrapper.dart';
+import '../../core/constants/app_colors.dart';
+import '../../wrapper/auth_wrapper.dart';
 
 class SplashOnboardingScreen extends StatefulWidget {
   const SplashOnboardingScreen({super.key});
@@ -18,26 +18,26 @@ class _SplashOnboardingScreenState extends State<SplashOnboardingScreen> {
     OnboardingPage(
       icon: Icons.currency_bitcoin,
       iconColor: AppColors.bitcoinOrange,
-      title: 'Prix en Temps Réel',
+      title: 'Real-Time Prices',
       description:
-          'Les prix évoluent automatiquement selon le cours du Bitcoin toutes les 30 secondes',
-      gradient: [AppColors.bitcoinOrange, AppColors.bitcoinOrangeDark],
+          'Track Bitcoin prices updated automatically every 30 seconds',
+      backgroundImage: 'assets/images/pexels-karola-g-5980875.jpg',
     ),
     OnboardingPage(
       icon: Icons.store_rounded,
       iconColor: AppColors.primaryBlue,
-      title: 'Découvrez des Boutiques',
+      title: 'Discover Shops',
       description:
-          'Explorez des commerces locaux et trouvez des produits uniques près de chez vous',
-      gradient: [AppColors.primaryBlue, AppColors.secondaryPurple],
+          'Explore local stores and find unique products nearby',
+      backgroundImage: 'assets/images/pexels-karola-g-5980875.jpg',
     ),
     OnboardingPage(
       icon: Icons.trending_up_rounded,
       iconColor: AppColors.success,
-      title: 'Achetez Malin',
+      title: 'Smart Shopping',
       description:
-          'Profitez des variations du marché crypto pour faire les meilleures affaires',
-      gradient: [AppColors.success, AppColors.btcStable],
+          'Take advantage of crypto market trends to make the best deals',
+      backgroundImage: 'assets/images/onboarding2.png',
     ),
   ];
 
@@ -65,7 +65,6 @@ class _SplashOnboardingScreenState extends State<SplashOnboardingScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // PageView avec les slides
           PageView.builder(
             controller: _pageController,
             onPageChanged: (index) {
@@ -78,8 +77,6 @@ class _SplashOnboardingScreenState extends State<SplashOnboardingScreen> {
               return _OnboardingPageWidget(page: _pages[index]);
             },
           ),
-
-          // Indicateurs de page
           Positioned(
             bottom: 120,
             left: 0,
@@ -96,15 +93,13 @@ class _SplashOnboardingScreenState extends State<SplashOnboardingScreen> {
                   decoration: BoxDecoration(
                     color: _currentPage == index
                         ? AppColors.bitcoinOrange
-                        : Colors.grey.withValues(alpha: 0.3),
+                        : Colors.white.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
               ),
             ),
           ),
-
-          // Bouton suivant/commencer
           Positioned(
             bottom: 40,
             left: 24,
@@ -113,22 +108,19 @@ class _SplashOnboardingScreenState extends State<SplashOnboardingScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Bouton "Passer"
                   if (_currentPage < _pages.length - 1)
                     TextButton(
                       onPressed: _navigateToAuth,
                       child: const Text(
-                        'Passer',
+                        'Skip',
                         style: TextStyle(
-                          color: Colors.grey,
+                          color: Colors.white70,
                           fontSize: 16,
                         ),
                       ),
                     )
                   else
                     const SizedBox(width: 80),
-
-                  // Bouton principal
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
@@ -144,26 +136,27 @@ class _SplashOnboardingScreenState extends State<SplashOnboardingScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.bitcoinOrange,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        elevation: 8,
-                        shadowColor: AppColors.bitcoinOrange.withValues(alpha: 0.5),
+                        elevation: 6,
+                        shadowColor:
+                            AppColors.bitcoinOrange.withOpacity(0.5),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             _currentPage < _pages.length - 1
-                                ? 'Suivant'
-                                : 'Commencer',
+                                ? 'Next'
+                                : 'Get Started',
                             style: const TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 6),
                           const Icon(Icons.arrow_forward_rounded),
                         ],
                       ),
@@ -179,24 +172,22 @@ class _SplashOnboardingScreenState extends State<SplashOnboardingScreen> {
   }
 }
 
-// Modèle de page d'onboarding
 class OnboardingPage {
   final IconData icon;
   final Color iconColor;
   final String title;
   final String description;
-  final List<Color> gradient;
+  final String backgroundImage;
 
   OnboardingPage({
     required this.icon,
     required this.iconColor,
     required this.title,
     required this.description,
-    required this.gradient,
+    required this.backgroundImage,
   });
 }
 
-// Widget pour afficher une page d'onboarding
 class _OnboardingPageWidget extends StatelessWidget {
   final OnboardingPage page;
 
@@ -204,92 +195,98 @@ class _OnboardingPageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.white,
-            page.gradient[0].withValues(alpha: 0.05),
-          ],
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Image.asset(
+          page.backgroundImage,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(color: Colors.black87);
+          },
         ),
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(40),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Spacer(),
-
-              // Icône avec animation
-              TweenAnimationBuilder<double>(
-                duration: const Duration(milliseconds: 800),
-                tween: Tween(begin: 0.0, end: 1.0),
-                builder: (context, value, child) {
-                  return Transform.scale(
-                    scale: value,
-                    child: Container(
-                      width: 140,
-                      height: 140,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: page.gradient,
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: page.iconColor.withValues(alpha: 0.3),
-                            blurRadius: 30,
-                            spreadRadius: 5,
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        page.icon,
-                        size: 70,
-                        color: Colors.white,
-                      ),
-                    ),
-                  );
-                },
-              ),
-
-              const SizedBox(height: 60),
-
-              // Titre
-              Text(
-                page.title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                  height: 1.2,
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // Description
-              Text(
-                page.description,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 17,
-                  color: Colors.grey[600],
-                  height: 1.5,
-                ),
-              ),
-
-              const Spacer(flex: 2),
-            ],
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.black.withOpacity(0.2),
+                Colors.black.withOpacity(0.7),
+              ],
+            ),
           ),
         ),
-      ),
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 60),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Spacer(),
+                TweenAnimationBuilder<double>(
+                  duration: const Duration(milliseconds: 800),
+                  tween: Tween(begin: 0.0, end: 1.0),
+                  builder: (context, value, child) {
+                    return Transform.scale(
+                      scale: value,
+                      child: Container(
+                        width: 140,
+                        height: 140,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              page.iconColor.withOpacity(0.9),
+                              page.iconColor.withOpacity(0.6)
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: page.iconColor.withOpacity(0.3),
+                              blurRadius: 30,
+                              spreadRadius: 5,
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          page.icon,
+                          size: 70,
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 60),
+                Text(
+                  page.title,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    height: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  page.description,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    color: Colors.white70,
+                    height: 1.5,
+                  ),
+                ),
+                const Spacer(flex: 2),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

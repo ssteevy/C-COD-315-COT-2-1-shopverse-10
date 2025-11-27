@@ -1,5 +1,3 @@
-// lib/providers/auth_provider.dart
-
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user.dart';
@@ -33,10 +31,7 @@ class AuthProvider with ChangeNotifier {
     });
   }
 
-  // ==========================================
-  // INSCRIPTION
-  // ==========================================
-  
+  // inscription 
   Future<bool> signUp({
     required String email,
     required String password,
@@ -51,20 +46,19 @@ class AuthProvider with ChangeNotifier {
         password: password,
         displayName: displayName,
       );
-      
-      _setLoading(false);
+
+      notifyListeners(); // ← IMPORTANT
+
       return true;
     } catch (e) {
       _errorMessage = e.toString();
-      _setLoading(false);
       return false;
+    } finally {
+      _setLoading(false);
     }
   }
 
-  // ==========================================
-  // CONNEXION EMAIL/PASSWORD
-  // ==========================================
-  
+  // connexion classique 
   Future<bool> signIn({
     required String email,
     required String password,
@@ -77,39 +71,38 @@ class AuthProvider with ChangeNotifier {
         email: email,
         password: password,
       );
-      
-      _setLoading(false);
+
+      notifyListeners(); // ← IMPORTANT
+
       return true;
     } catch (e) {
       _errorMessage = e.toString();
-      _setLoading(false);
       return false;
+    } finally {
+      _setLoading(false);
     }
   }
 
-  // ==========================================
-  // CONNEXION GOOGLE
-  // ==========================================
-  
+  //  connxion google 
   Future<bool> signInWithGoogle() async {
     _setLoading(true);
     _errorMessage = null;
 
     try {
       _currentUser = await _authService.signInWithGoogle();
-      _setLoading(false);
+
+      notifyListeners(); // ← IMPORTANT
+
       return _currentUser != null;
     } catch (e) {
       _errorMessage = e.toString();
-      _setLoading(false);
       return false;
+    } finally {
+      _setLoading(false);
     }
   }
 
-  // ==========================================
-  // DEMANDER STATUT COMMERÇANT
-  // ==========================================
-  
+  //  demander status 
   Future<bool> requestMerchantStatus(String reason) async {
     if (_currentUser == null) return false;
 
@@ -124,20 +117,19 @@ class AuthProvider with ChangeNotifier {
       
       // Rafraîchir le profil
       _currentUser = await _authService.getUserProfile(_currentUser!.id);
-      
-      _setLoading(false);
+
+      notifyListeners();
+
       return true;
     } catch (e) {
       _errorMessage = e.toString();
-      _setLoading(false);
       return false;
+    } finally {
+      _setLoading(false);
     }
   }
 
-  // ==========================================
-  // METTRE À JOUR PROFIL
-  // ==========================================
-  
+  // mis a jour profile 
   Future<bool> updateProfile({
     String? displayName,
     String? photoUrl,
@@ -156,39 +148,35 @@ class AuthProvider with ChangeNotifier {
       
       // Rafraîchir le profil
       _currentUser = await _authService.getUserProfile(_currentUser!.id);
-      
-      _setLoading(false);
+
+      notifyListeners();
+
       return true;
     } catch (e) {
       _errorMessage = e.toString();
-      _setLoading(false);
       return false;
+    } finally {
+      _setLoading(false);
     }
   }
 
-  // ==========================================
-  // RÉINITIALISER MOT DE PASSE
-  // ==========================================
-  
+  //  reinitialse mdp 
   Future<bool> resetPassword(String email) async {
     _setLoading(true);
     _errorMessage = null;
 
     try {
       await _authService.resetPassword(email);
-      _setLoading(false);
       return true;
     } catch (e) {
       _errorMessage = e.toString();
-      _setLoading(false);
       return false;
+    } finally {
+      _setLoading(false);
     }
   }
 
-  // ==========================================
-  // DÉCONNEXION
-  // ==========================================
-  
+  // logout 
   Future<void> signOut() async {
     try {
       await _authService.signOut();
@@ -201,10 +189,7 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  // ==========================================
-  // HELPERS PRIVÉS
-  // ==========================================
-  
+  // helpers 
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
