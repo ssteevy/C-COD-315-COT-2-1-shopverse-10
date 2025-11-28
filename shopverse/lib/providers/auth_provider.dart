@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user.dart';
 import '../services/auth_service.dart';
 
-/// Provider de gestion de l'état d'authentification
+// Provider de gestion de l'état d'authentification
 class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
   
@@ -21,7 +21,7 @@ class AuthProvider with ChangeNotifier {
   void listenToAuthChanges() {
     _authService.authStateChanges.listen((User? firebaseUser) async {
       if (firebaseUser != null) {
-        // Utilisateur connecté → Charger son profil
+        // Utilisateur connecté  Charger son profil
         _currentUser = await _authService.getUserProfile(firebaseUser.uid);
       } else {
         // Utilisateur déconnecté
@@ -47,7 +47,7 @@ class AuthProvider with ChangeNotifier {
         displayName: displayName,
       );
 
-      notifyListeners(); // ← IMPORTANT
+      notifyListeners(); 
 
       return true;
     } catch (e) {

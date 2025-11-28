@@ -110,10 +110,7 @@ class ClientProfilePage extends StatelessWidget {
   }
 }
 
-// ==========================================
-// Widget Section demande commerçant
-// ==========================================
-
+// demande commercant 
 class _MerchantRequestSection extends StatefulWidget {
   final UserModel user;
 
