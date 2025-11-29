@@ -46,6 +46,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
           backgroundColor: AppColors.error,
         ),
       );
+    } else if (success && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Compte créé avec succès '),
+          backgroundColor: Colors.green,
+          duration: Duration(milliseconds: 800),
+        ),
+      );
+
+      await Future.delayed(const Duration(milliseconds: 800));
+
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(context, '/home');
     }
   }
 
@@ -65,6 +78,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+    if (auth.currentUser != null) {
+      Future.microtask(() {
+        Navigator.pushReplacementNamed(context, '/auth-wrapper');
+      });
+    }
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(

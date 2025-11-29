@@ -3,35 +3,36 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user.dart';
 import '../services/auth_service.dart';
 
-// Provider de gestion de l'état d'authentification
+// // Provider de gestion de l'état d'authentification
+
 class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
-  
+
   UserModel? _currentUser;
   bool _isLoading = false;
   String? _errorMessage;
+//   // Getters
 
-  // Getters
   UserModel? get currentUser => _currentUser;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   bool get isAuthenticated => _currentUser != null;
-
-  /// Écouter les changements d'authentification Firebase
+//   /// Écouter les changements d'authentification Firebase
   void listenToAuthChanges() {
-    _authService.authStateChanges.listen((User? firebaseUser) async {
+    FirebaseAuth.instance.authStateChanges().listen((User? firebaseUser) async {
       if (firebaseUser != null) {
-        // Utilisateur connecté  Charger son profil
-        _currentUser = await _authService.getUserProfile(firebaseUser.uid);
+        final profile = await _authService.getUserProfile(firebaseUser.uid);
+        if (profile == null) {
+          return;
+        }
+        _currentUser = profile;
       } else {
-        // Utilisateur déconnecté
         _currentUser = null;
       }
       notifyListeners();
     });
   }
-
-  // inscription 
+//   // inscription 
   Future<bool> signUp({
     required String email,
     required String password,
@@ -46,9 +47,9 @@ class AuthProvider with ChangeNotifier {
         password: password,
         displayName: displayName,
       );
+      await Future.delayed(const Duration(milliseconds: 200));
 
-      notifyListeners(); 
-
+      notifyListeners();
       return true;
     } catch (e) {
       _errorMessage = e.toString();
@@ -57,12 +58,8 @@ class AuthProvider with ChangeNotifier {
       _setLoading(false);
     }
   }
-
-  // connexion classique 
-  Future<bool> signIn({
-    required String email,
-    required String password,
-  }) async {
+//   // connexion classique 
+  Future<bool> signIn({required String email, required String password}) async {
     _setLoading(true);
     _errorMessage = null;
 
@@ -71,9 +68,9 @@ class AuthProvider with ChangeNotifier {
         email: email,
         password: password,
       );
+      await Future.delayed(const Duration(milliseconds: 200));
 
-      notifyListeners(); // ← IMPORTANT
-
+      notifyListeners();
       return true;
     } catch (e) {
       _errorMessage = e.toString();
@@ -82,8 +79,7 @@ class AuthProvider with ChangeNotifier {
       _setLoading(false);
     }
   }
-
-  //  connxion google 
+//   //  connxion google 
   Future<bool> signInWithGoogle() async {
     _setLoading(true);
     _errorMessage = null;
@@ -91,8 +87,7 @@ class AuthProvider with ChangeNotifier {
     try {
       _currentUser = await _authService.signInWithGoogle();
 
-      notifyListeners(); // ← IMPORTANT
-
+      notifyListeners();
       return _currentUser != null;
     } catch (e) {
       _errorMessage = e.toString();
@@ -101,8 +96,7 @@ class AuthProvider with ChangeNotifier {
       _setLoading(false);
     }
   }
-
-  //  demander status 
+//   //  demander status 
   Future<bool> requestMerchantStatus(String reason) async {
     if (_currentUser == null) return false;
 
@@ -114,12 +108,9 @@ class AuthProvider with ChangeNotifier {
         userId: _currentUser!.id,
         reason: reason,
       );
-      
-      // Rafraîchir le profil
+
       _currentUser = await _authService.getUserProfile(_currentUser!.id);
-
       notifyListeners();
-
       return true;
     } catch (e) {
       _errorMessage = e.toString();
@@ -129,11 +120,8 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  // mis a jour profile 
-  Future<bool> updateProfile({
-    String? displayName,
-    String? photoUrl,
-  }) async {
+//   // mis a jour profile 
+  Future<bool> updateProfile({String? displayName, String? photoUrl}) async {
     if (_currentUser == null) return false;
 
     _setLoading(true);
@@ -145,12 +133,9 @@ class AuthProvider with ChangeNotifier {
         displayName: displayName,
         photoUrl: photoUrl,
       );
-      
-      // Rafraîchir le profil
+
       _currentUser = await _authService.getUserProfile(_currentUser!.id);
-
       notifyListeners();
-
       return true;
     } catch (e) {
       _errorMessage = e.toString();
@@ -159,8 +144,7 @@ class AuthProvider with ChangeNotifier {
       _setLoading(false);
     }
   }
-
-  //  reinitialse mdp 
+//       // Rafraîchir le profil
   Future<bool> resetPassword(String email) async {
     _setLoading(true);
     _errorMessage = null;
@@ -175,8 +159,7 @@ class AuthProvider with ChangeNotifier {
       _setLoading(false);
     }
   }
-
-  // logout 
+//   // logout 
   Future<void> signOut() async {
     try {
       await _authService.signOut();
@@ -189,7 +172,6 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  // helpers 
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
