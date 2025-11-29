@@ -79,4 +79,20 @@ class ProductService {
               .toList();
         });
   }
+
+
+  // Lire les produits d'une boutique spécifique
+  Stream<List<Product>> getProductsByShop(String shopId) {
+    return _firestore
+        .collection(_collection)
+        .where('shopId', isEqualTo: shopId)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => Product.fromMap(doc.data(), doc.id))
+              .toList();
+        });
+  }
+
 }
