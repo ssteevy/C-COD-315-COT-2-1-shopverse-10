@@ -206,13 +206,11 @@ class ClientHomePage extends StatelessWidget {
                   boutiqueCard(
                     "Tech Store Paris",
                     "4.8 ★  •  2.3 km",
-                    "156 produits",
                     Colors.purple,
                   ),
                   boutiqueCard(
                     "Mode & Style",
                     "4.5 ★  •  4.8 km",
-                    "89 produits",
                     Colors.blue,
                   ),
                 ],
@@ -229,7 +227,6 @@ class ClientHomePage extends StatelessWidget {
 Widget boutiqueCard(
   String title,
   String subtitle,
-  String products,
   Color badgeColor,
 ) {
   return Container(
@@ -269,7 +266,6 @@ Widget boutiqueCard(
         const SizedBox(height: 4),
         Text(subtitle, style: const TextStyle(color: Colors.grey)),
         const SizedBox(height: 4),
-        Text(products, style: const TextStyle(color: Colors.grey)),
       ],
     ),
   );

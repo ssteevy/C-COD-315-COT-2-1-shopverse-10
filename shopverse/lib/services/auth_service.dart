@@ -96,6 +96,7 @@ class AuthService {
           await googleUser.authentication;
 
       // verifier que les tokens existent
+      // verifier que les tokens existent
       if (googleAuth.accessToken == null || googleAuth.idToken == null) {
         throw 'Impossible d\'obtenir les tokens Google';
       }
@@ -178,6 +179,7 @@ class AuthService {
   }
 
 //  rejeter demande 
+//  rejeter demande 
   Future<void> rejectMerchantRequest(String userId, String reason) async {
     try {
       await _firestore.collection('users').doc(userId).update({
@@ -186,6 +188,7 @@ class AuthService {
         'merchantApprovalDate': FieldValue.serverTimestamp(),
       });
 
+      print('Demande rejetée pour $userId');
       print('Demande rejetée pour $userId');
     } catch (e) {
       throw 'Erreur lors du rejet: $e';
@@ -261,10 +264,7 @@ class AuthService {
     }
   }
 
-  // ==========================================
-  // GESTION DES ERREURS FIREBASE
-  // ==========================================
-  
+//  gerer erreurs firebase 
   String _handleAuthException(FirebaseAuthException e) {
     switch (e.code) {
       case 'user-not-found':
