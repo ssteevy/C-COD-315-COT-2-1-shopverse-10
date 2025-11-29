@@ -21,7 +21,7 @@ class AuthWrapper extends StatelessWidget {
           );
         }
 
-        if (!auth.isAuthenticated || auth.currentUser == null) {
+        if (auth.currentUser == null) {
           return const LoginScreen();
         }
 
@@ -42,3 +42,19 @@ class AuthWrapper extends StatelessWidget {
     );
   }
 }
+// InputConnectionAdaptor(16391): The input method toggled cursor monitoring on
+// D/InputConnectionAdaptor(16391): The input method toggled cursor monitoring off
+// D/InputConnectionAdaptor(16391): The input method toggled cursor monitoring on
+// D/InsetsController(16391): show(ime(), fromIme=true)
+// D/InsetsController(16391): show(ime(), fromIme=true)
+// I/FirebaseAuth(16391): Creating user with nouveau@gmail.com with empty reCAPTCHA token
+// W/System  (16391): Ignoring header X-Firebase-Locale because its value was null.
+// W/System  (16391): Ignoring header X-Firebase-Locale because its value was null.
+// D/FirebaseAuth(16391): Notifying id token listeners about user ( f5OdEjz8LGNLtDxsiWU4sWvJXSy2 ).
+// D/FirebaseAuth(16391): Notifying auth state listeners about user ( f5OdEjz8LGNLtDxsiWU4sWvJXSy2 ).
+// W/System  (16391): Ignoring header X-Firebase-Locale because its value was null.
+// W/System  (16391): Ignoring header X-Firebase-Locale because its value was null.
+// W/System  (16391): Ignoring header X-Firebase-Locale because its value was null.
+// I/ScrollIdentify(16391): on fling
+// I/ample.shopverse(16391): Background concurrent mark compact GC freed 4934KB AllocSpace bytes, 17(660KB) LOS objects, 49% free, 5780KB/11MB, paused 1.183ms,8.008ms total 87.806ms
+// I/ScrollIdentify(16391): on fling ca dit quoi? 

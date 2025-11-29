@@ -1,42 +1,38 @@
-// lib/providers/auth_provider.dart
-
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user.dart';
 import '../services/auth_service.dart';
 
-/// Provider de gestion de l'état d'authentification
+// // Provider de gestion de l'état d'authentification
+
 class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
-  
+
   UserModel? _currentUser;
   bool _isLoading = false;
   String? _errorMessage;
+//   // Getters
 
-  // Getters
   UserModel? get currentUser => _currentUser;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   bool get isAuthenticated => _currentUser != null;
-
-  /// Écouter les changements d'authentification Firebase
+//   /// Écouter les changements d'authentification Firebase
   void listenToAuthChanges() {
-    _authService.authStateChanges.listen((User? firebaseUser) async {
+    FirebaseAuth.instance.authStateChanges().listen((User? firebaseUser) async {
       if (firebaseUser != null) {
-        // Utilisateur connecté → Charger son profil
-        _currentUser = await _authService.getUserProfile(firebaseUser.uid);
+        final profile = await _authService.getUserProfile(firebaseUser.uid);
+        if (profile == null) {
+          return;
+        }
+        _currentUser = profile;
       } else {
-        // Utilisateur déconnecté
         _currentUser = null;
       }
       notifyListeners();
     });
   }
-
-  // ==========================================
-  // INSCRIPTION
-  // ==========================================
-  
+//   // inscription 
   Future<bool> signUp({
     required String email,
     required String password,
@@ -51,24 +47,19 @@ class AuthProvider with ChangeNotifier {
         password: password,
         displayName: displayName,
       );
-      
-      _setLoading(false);
+      await Future.delayed(const Duration(milliseconds: 200));
+
+      notifyListeners();
       return true;
     } catch (e) {
       _errorMessage = e.toString();
-      _setLoading(false);
       return false;
+    } finally {
+      _setLoading(false);
     }
   }
-
-  // ==========================================
-  // CONNEXION EMAIL/PASSWORD
-  // ==========================================
-  
-  Future<bool> signIn({
-    required String email,
-    required String password,
-  }) async {
+//   // connexion classique 
+  Future<bool> signIn({required String email, required String password}) async {
     _setLoading(true);
     _errorMessage = null;
 
@@ -77,39 +68,35 @@ class AuthProvider with ChangeNotifier {
         email: email,
         password: password,
       );
-      
-      _setLoading(false);
+      await Future.delayed(const Duration(milliseconds: 200));
+
+      notifyListeners();
       return true;
     } catch (e) {
       _errorMessage = e.toString();
-      _setLoading(false);
       return false;
+    } finally {
+      _setLoading(false);
     }
   }
-
-  // ==========================================
-  // CONNEXION GOOGLE
-  // ==========================================
-  
+//   //  connxion google 
   Future<bool> signInWithGoogle() async {
     _setLoading(true);
     _errorMessage = null;
 
     try {
       _currentUser = await _authService.signInWithGoogle();
-      _setLoading(false);
+
+      notifyListeners();
       return _currentUser != null;
     } catch (e) {
       _errorMessage = e.toString();
-      _setLoading(false);
       return false;
+    } finally {
+      _setLoading(false);
     }
   }
-
-  // ==========================================
-  // DEMANDER STATUT COMMERÇANT
-  // ==========================================
-  
+//   //  demander status 
   Future<bool> requestMerchantStatus(String reason) async {
     if (_currentUser == null) return false;
 
@@ -121,27 +108,20 @@ class AuthProvider with ChangeNotifier {
         userId: _currentUser!.id,
         reason: reason,
       );
-      
-      // Rafraîchir le profil
+
       _currentUser = await _authService.getUserProfile(_currentUser!.id);
-      
-      _setLoading(false);
+      notifyListeners();
       return true;
     } catch (e) {
       _errorMessage = e.toString();
-      _setLoading(false);
       return false;
+    } finally {
+      _setLoading(false);
     }
   }
 
-  // ==========================================
-  // METTRE À JOUR PROFIL
-  // ==========================================
-  
-  Future<bool> updateProfile({
-    String? displayName,
-    String? photoUrl,
-  }) async {
+//   // mis a jour profile 
+  Future<bool> updateProfile({String? displayName, String? photoUrl}) async {
     if (_currentUser == null) return false;
 
     _setLoading(true);
@@ -153,42 +133,33 @@ class AuthProvider with ChangeNotifier {
         displayName: displayName,
         photoUrl: photoUrl,
       );
-      
-      // Rafraîchir le profil
+
       _currentUser = await _authService.getUserProfile(_currentUser!.id);
-      
-      _setLoading(false);
+      notifyListeners();
       return true;
     } catch (e) {
       _errorMessage = e.toString();
-      _setLoading(false);
       return false;
+    } finally {
+      _setLoading(false);
     }
   }
-
-  // ==========================================
-  // RÉINITIALISER MOT DE PASSE
-  // ==========================================
-  
+//       // Rafraîchir le profil
   Future<bool> resetPassword(String email) async {
     _setLoading(true);
     _errorMessage = null;
 
     try {
       await _authService.resetPassword(email);
-      _setLoading(false);
       return true;
     } catch (e) {
       _errorMessage = e.toString();
-      _setLoading(false);
       return false;
+    } finally {
+      _setLoading(false);
     }
   }
-
-  // ==========================================
-  // DÉCONNEXION
-  // ==========================================
-  
+//   // logout 
   Future<void> signOut() async {
     try {
       await _authService.signOut();
@@ -201,10 +172,6 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  // ==========================================
-  // HELPERS PRIVÉS
-  // ==========================================
-  
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();

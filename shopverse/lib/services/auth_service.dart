@@ -11,14 +11,12 @@ class AuthService {
     scopes: ['email'],
   );
 
-  /// Stream des changements d'authentification
+  // changements d'authentification
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  /// Utilisateur Firebase actuellement connecté
+  /// Utilisateur Firebase
   User? get currentUser => _auth.currentUser;
-
-//  inscriptuon classique
-  
+// inscription classique 
   Future<UserModel?> signUpWithEmail({
     required String email,
     required String password,
@@ -54,7 +52,7 @@ class AuthService {
     }
   }
 
-//  connexion classsique 
+// connexion classique 
   Future<UserModel?> signInWithEmail({
     required String email,
     required String password,
@@ -82,43 +80,45 @@ class AuthService {
       throw 'Erreur lors de la connexion: $e';
     }
   }
-// connexion google 
+
+  // connexion google
   Future<UserModel?> signInWithGoogle() async {
     try {
-      // declencher le flux Google Sign-In
+    //  start flux Google Sign-In
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       
       if (googleUser == null) {
-        return null; // Utilisateur a annulé
+        return null; 
       }
 
-      //get les tokens d'authentification
+      // get les tokens d'authentification
       final GoogleSignInAuthentication googleAuth = 
           await googleUser.authentication;
 
+      // verifier que les tokens existent
       // verifier que les tokens existent
       if (googleAuth.accessToken == null || googleAuth.idToken == null) {
         throw 'Impossible d\'obtenir les tokens Google';
       }
 
-      // creer les credentials Firebase
+      //Créer les credentials Firebase
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      // se connecter avec Firebase
+      // Se connecter avec Firebase
       UserCredential userCredential = 
           await _auth.signInWithCredential(credential);
 
-      //veifier si le profil existe déjà
+      //  Vérifier si le profil existe déjà
       DocumentSnapshot userDoc = await _firestore
           .collection('users')
           .doc(userCredential.user!.uid)
           .get();
 
       if (!userDoc.exists) {
-        // siouveau compte Google, creer profile
+        // Nouveau compte Google,Créer profil CLIENT
         UserModel newUser = UserModel(
           id: userCredential.user!.uid,
           email: userCredential.user!.email!,
@@ -144,8 +144,7 @@ class AuthService {
       throw 'Erreur lors de la connexion Google: $e';
     }
   }
-
-// demande de statut commercant
+// demande status commercant 
   Future<void> requestMerchantStatus({
     required String userId,
     required String reason,
@@ -158,13 +157,12 @@ class AuthService {
         'rejectionReason': null,
       });
 
-      print('📨 Demande commerçant envoyée pour $userId');
+      print('Demande commerçant envoyée pour $userId');
     } catch (e) {
       throw 'Erreur lors de la demande: $e';
     }
   }
-
-//  approuver une demande 
+// approuver demande 
   Future<void> approveMerchantRequest(String userId) async {
     try {
       await _firestore.collection('users').doc(userId).update({
@@ -174,12 +172,13 @@ class AuthService {
         'rejectionReason': null,
       });
 
-      print('Demande approuvée pour $userId');
+      print(' Demande approuvée pour $userId');
     } catch (e) {
       throw 'Erreur lors de l\'approbation: $e';
     }
   }
 
+//  rejeter demande 
 //  rejeter demande 
   Future<void> rejectMerchantRequest(String userId, String reason) async {
     try {
@@ -190,12 +189,12 @@ class AuthService {
       });
 
       print('Demande rejetée pour $userId');
+      print('Demande rejetée pour $userId');
     } catch (e) {
       throw 'Erreur lors du rejet: $e';
     }
   }
-
-// demandes en attentes 
+// recup demande en attente 
   Stream<List<UserModel>> getPendingMerchantRequests() {
     return _firestore
         .collection('users')
@@ -206,7 +205,7 @@ class AuthService {
             snapshot.docs.map((doc) => UserModel.fromFirestore(doc)).toList());
   }
 
-//  recup user profile 
+//  recup profile user 
   Future<UserModel?> getUserProfile(String userId) async {
     try {
       DocumentSnapshot userDoc = 
@@ -219,7 +218,7 @@ class AuthService {
     }
   }
 
-  // mis a jour du profil 
+// mis a jour profile 
   Future<void> updateUserProfile({
     required String userId,
     String? displayName,
@@ -245,7 +244,7 @@ class AuthService {
     }
   }
 
-//  reinitialise mdp 
+// reinit mdp 
   Future<void> resetPassword(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
@@ -253,8 +252,7 @@ class AuthService {
       throw _handleAuthException(e);
     }
   }
-
-//  logout 
+// logout 
   Future<void> signOut() async {
     try {
       await Future.wait([

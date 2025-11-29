@@ -39,6 +39,19 @@ class _LoginScreenState extends State<LoginScreen> {
           backgroundColor: AppColors.error,
         ),
       );
+    } else if (success && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Connexion réussie '),
+          backgroundColor: Colors.green,
+          duration: Duration(milliseconds: 800),
+        ),
+      );
+
+      await Future.delayed(const Duration(milliseconds: 800));
+
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(context, '/home');
     }
   }
 
@@ -58,6 +71,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+    if (auth.currentUser != null) {
+      Future.microtask(() {
+        Navigator.pushReplacementNamed(context, '/auth-wrapper');
+      });
+    }
+
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -76,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: AppColors.bitcoinOrange,
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Titre
                   const Text(
                     'ShopVerse',
@@ -90,7 +110,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   const Text(
                     'Marketplace Bitcoin',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                   const SizedBox(height: 48),
 
@@ -123,9 +146,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       prefixIcon: const Icon(Icons.lock_outlined),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscurePassword 
-                            ? Icons.visibility_outlined 
-                            : Icons.visibility_off_outlined,
+                          _obscurePassword
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
                         ),
                         onPressed: () {
                           setState(() {
@@ -154,7 +177,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 width: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
                                 ),
                               )
                             : const Text(
@@ -189,7 +214,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   Consumer<AuthProvider>(
                     builder: (context, authProvider, child) {
                       return OutlinedButton.icon(
-                        onPressed: authProvider.isLoading ? null : _handleGoogleSignIn,
+                        onPressed: authProvider.isLoading
+                            ? null
+                            : _handleGoogleSignIn,
                         icon: const Icon(Icons.g_mobiledata, size: 32),
                         label: const Text('Continuer avec Google'),
                       );
