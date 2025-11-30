@@ -1,74 +1,70 @@
-import 'package:flutter/material.dart';
-import '../../core/constants/app_colors.dart';
 
-class ClientExplorePage extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../../widgets/map_search_bar.dart';
+import '../../widgets/map_gps_button.dart';
+import '../../widgets/shop_bottom_sheet.dart';
+import '../../models/shop.dart';
+
+
+class ClientExplorePage extends StatefulWidget {
   const ClientExplorePage({super.key});
 
   @override
+  State<ClientExplorePage> createState() => _ClientExplorePageState();
+}
+
+class _ClientExplorePageState extends State<ClientExplorePage> {
+  GoogleMapController? mapController;
+
+  final LatLng initialPosition = const LatLng(48.8566, 2.3522); // Position par défaut
+
+  void onMapCreated(controller) {
+    mapController = controller;
+  }
+
+  @override
+  
   Widget build(BuildContext context) {
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Explorer'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.list),
-            onPressed: () {
-              // Basculer entre carte et liste
-            },
-          ),
-        ],
-      ),
       body: Stack(
         children: [
-          // Carte 
-          Container(
-            color: Colors.grey[300],
-            child: const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.map, size: 64, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text(
-                    'Carte Google Maps',
-                    style: TextStyle(fontSize: 18, color: Colors.grey),
-                  ),
-                  Text(
-                    'À intégrer avec google_maps_flutter',
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                ],
-              ),
+          // ------------------------- CARTE -------------------------
+          GoogleMap(
+            onMapCreated: onMapCreated,
+            initialCameraPosition: CameraPosition(
+              target: initialPosition,
+              zoom: 4.5,
             ),
+            myLocationEnabled: true,
+            myLocationButtonEnabled: false,
+            zoomControlsEnabled: false,
+            markers: {}, // tu vas ajouter les pins plus tard
           ),
 
-          // Barre de recherche en haut
-          Positioned(
-            top: 16,
-            left: 16,
-            right: 16,
-            child: Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Rechercher près de vous...',
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-              ),
-            ),
+          // ------------------------- BARRE DE RECHERCHE -------------------------
+          const Positioned(
+            top: 50,
+            left: 20,
+            right: 70,
+            child: MapSearchBar(),
+          ),
+
+          // ------------------------- BOUTON GPS -------------------------
+          const Positioned(
+            top: 50,
+            right: 20,
+            child: MapGpsButton(),
+          ),
+
+          // ------------------------- BOTTOM SHEET -------------------------
+          const Align(
+            alignment: Alignment.bottomCenter,
+            child: ShopBottomSheet(),
           ),
         ],
       ),
     );
   }
 }
-

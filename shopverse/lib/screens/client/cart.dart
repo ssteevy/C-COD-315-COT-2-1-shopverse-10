@@ -89,9 +89,9 @@ class _ClientCartPageState extends State<ClientCartPage> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Ajoutez des produits pour commencer',
+            'Ajoutez des produits',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 14,
               color: Colors.grey[600],
             ),
           ),
